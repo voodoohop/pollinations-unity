@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,19 +10,24 @@ namespace Pollinations.Unity.Samples
     /// The Image and Status references are optional - when they are missing the
     /// component builds a minimal overlay UI at runtime, so the sample scene
     /// works with nothing assigned.
+    ///
+    /// The development API key is deliberately NOT a serialized field: Unity
+    /// serializes public fields into scenes, prefabs, and builds. It is read
+    /// at runtime from EditorPrefs (editor only, set via the Tools menu) or the
+    /// POLLINATIONS_API_KEY environment variable, and it never leaves this
+    /// process. Shipped games should use the PollinationsAuth device flow.
     /// </summary>
     public sealed class PollinationsDemo : MonoBehaviour
     {
-        [Header("Development key from enter.pollinations.ai/keys. Leave empty in " +
-                "player-funded builds and authorize with PollinationsAuth instead.")]
-        public string ApiKey;
-
         [Header("Prompt used for the image; the text call describes it in words.")]
         public string Prompt = "A tiny pixel-art garden on an alien planet";
 
         public RawImage Image;
         public Text Status;
         public AudioSource Audio;
+
+        /// <summary>In-memory key override; not serialized by Unity.</summary>
+        public string ApiKey { get; set; }
 
         private void Awake()
         {
@@ -33,11 +39,20 @@ namespace Pollinations.Unity.Samples
             }
             if (Image == null || Status == null)
                 BuildDefaultUi();
+            if (string.IsNullOrEmpty(ApiKey))
+                ApiKey = ResolveApiKey();
         }
 
         [ContextMenu("Run Pollinations demo")]
         public async void Run()
         {
+            if (string.IsNullOrEmpty(ApiKey))
+            {
+                SetStatus("No development key set. Use Tools > Pollinations > Development API Key " +
+                          "in the editor, or authorize with PollinationsAuth for a player-funded build.");
+                return;
+            }
+
             var client = new PollinationsClient { ApiKey = ApiKey };
             SetStatus("Generating text...");
             var text = await client.TextAsync("Describe this scene in one cheerful sentence: " + Prompt);
@@ -56,6 +71,16 @@ namespace Pollinations.Unity.Samples
                 Audio.Play();
             }
             SetStatus("Done - the sentence was also spoken.");
+        }
+
+        private static string ResolveApiKey()
+        {
+#if UNITY_EDITOR
+            var editorKey = UnityEditor.EditorPrefs.GetString("PollinationsApiKey");
+            if (!string.IsNullOrEmpty(editorKey))
+                return editorKey;
+#endif
+            return Environment.GetEnvironmentVariable("POLLINATIONS_API_KEY") ?? string.Empty;
         }
 
         private void BuildDefaultUi()

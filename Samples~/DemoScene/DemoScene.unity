@@ -193,7 +193,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e5d2c0fa9b34f1e8d6b9a4c3f2e1d0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ApiKey: 
   Prompt: A tiny pixel-art garden on an alien planet
   Image: {fileID: 0}
   Status: {fileID: 0}
