@@ -1,0 +1,23 @@
+{
+  "name": "com.pollinations.unity",
+  "version": "1.0.0",
+  "displayName": "Pollinations for Unity",
+  "description": "Small, dependency-free async Unity client for Pollinations text, image, speech, live model lists, and device-flow auth.",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "author": {
+    "name": "Marcus Mok",
+    "url": "https://github.com/Marcus-Mok-GH"
+  },
+  "documentationUrl": "https://github.com/Marcus-Mok-GH/pollinations-unity#readme",
+  "changelogUrl": "https://github.com/Marcus-Mok-GH/pollinations-unity/releases",
+  "licensesUrl": "https://github.com/Marcus-Mok-GH/pollinations-unity/blob/main/LICENSE",
+  "license": "MIT",
+  "samples": [
+    {
+      "displayName": "Demo Scene",
+      "description": "Sample scene and script that generate text, an image, and speech end to end.",
+      "path": "Samples~/DemoScene"
+    }
+  ]
+}
